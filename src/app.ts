@@ -6,6 +6,7 @@ import indexRouter from "../router/index";
 import roomRouter from "../router/room";
 
 const app = express();
+
 app.use(
   cors({
     origin: ["http://localhost:3000", "http://localhost:5173"],
@@ -16,10 +17,10 @@ app.use(bodyParser.json());
 app.use("/", indexRouter);
 app.use("/room", roomRouter);
 
-app.listen("1234", () => {
+app.listen("3000", () => {
   console.log(`
   ################################################
-  🛡️  Server listening on port: 1234🛡️
+        🛡️  Server listening on port: 3000🛡️
   ################################################
   `);
 });
