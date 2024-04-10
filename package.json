@@ -6,8 +6,8 @@
   "author": "spde3289 <spde3289@naver.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/app.js", 
-    "build": "tsc -p .", 
+    "start": "node dist/src/app.js",
+    "build": "tsc -p .",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts"
   },
   "devDependencies": {
@@ -17,5 +17,10 @@
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.4"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.17",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5"
   }
 }
