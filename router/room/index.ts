@@ -23,7 +23,7 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
 // });
 
 /** 방 입장 */
-router.get("/join", (req: Request, res: Response, next: NextFunction) => {
+/* router.get("/join", (req: Request, res: Response, next: NextFunction) => {
   res.send("@@@@ 방 입장 @@@@");
 });
 
@@ -62,6 +62,6 @@ const sss = (server) => {
       socket.emit("news", "Hello Socket.IO");
     }, 3000);
   });
-};
+}; */
 
 export default router;

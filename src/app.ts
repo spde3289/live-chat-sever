@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import { Server } from "socket.io";
 import bodyParser from "body-parser";
 import cors from "cors";
 
@@ -6,24 +7,60 @@ import indexRouter from "../router/index";
 import roomRouter from "../router/room";
 
 const app = express();
-
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
-  })
-);
-app.use(bodyParser.json());
-
-app.use("/", indexRouter);
-app.use("/room", roomRouter);
-
-app.listen("3000", () => {
+const sever = app.listen("3000", () => {
   console.log(`
   ################################################
         🛡️  Server listening on port: 3000🛡️
   ################################################
   `);
 });
+
+const io = new Server(sever);
+let currentUser: any;
+
+io.on("connection", (socket) => {
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+  });
+
+  console.log("welcome");
+  socket.on("welcome", (user) => {
+    currentUser = user;
+    // socket.emit("newWelcome", user);
+  });
+
+  socket.on("chat message", (msg) => {
+    console.log(currentUser + ": " + msg);
+    io.emit("chat message", { msg: msg, user: currentUser });
+  });
+});
+
+app.use((req, res, next) => {
+  console.log("dasdasdasdasdasd");
+  res.setHeader("Access-Control-Allow-Origin", "http://192.168.0.101:5173");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With,content-type"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", 0);
+  cors({
+    origin: [
+      "*",
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://192.168.0.101:5173",
+    ],
+  });
+  next();
+});
+app.use(bodyParser.json());
+
+app.use("/", indexRouter);
+app.use("/room", roomRouter);
 
 /* let participants: any = [
   { id: 1, nation: "Republic of Korea" },
