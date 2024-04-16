@@ -15,99 +15,49 @@ const sever = app.listen("3000", () => {
   `);
 });
 
-const io = new Server(sever);
-let currentUser: any;
+let io = new Server(sever);
+
+let userList: string[] = [];
 
 io.on("connection", (socket) => {
+  console.log("접속");
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
+
+    for (let i = 0; i < userList.length; i++) {
+      if (userList[i] === socket.id) {
+        userList.splice(i, 1);
+        i--;
+      }
+    }
+    io.emit("user list", userList);
   });
 
-  console.log("welcome");
-  socket.on("welcome", (user) => {
-    currentUser = user;
-    // socket.emit("newWelcome", user);
+  socket.on("new member", (user) => {
+    console.log("user : " + user);
+    if (user != null) {
+    }
+    userList.push(socket.id);
+    io.emit("user list", userList);
   });
 
-  socket.on("chat message", (msg) => {
-    console.log(currentUser + ": " + msg);
-    io.emit("chat message", { msg: msg, user: currentUser });
+  socket.on("chat message", (msg, id) => {
+    console.log(id + ": " + msg);
+    io.emit("chat message", { msg: msg, user: id });
   });
 });
 
 app.use((req, res, next) => {
-  console.log("dasdasdasdasdasd");
-  res.setHeader("Access-Control-Allow-Origin", "http://192.168.0.101:5173");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173/");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
-  );
-  res.setHeader("Access-Control-Allow-Credentials", 0);
-  cors({
-    origin: [
-      "*",
-      "http://localhost:3000",
-      "http://localhost:5173",
-      "http://192.168.0.101:5173",
-    ],
-  });
+  bodyParser.json();
   next();
 });
-app.use(bodyParser.json());
 
+app.use(cors({ origin: "http://localhost:5173" }));
 app.use("/", indexRouter);
 app.use("/room", roomRouter);
-
-/* let participants: any = [
-  { id: 1, nation: "Republic of Korea" },
-  { id: 2, nation: "United States" },
-  { id: 3, nation: "Great Britain" },
-  { id: 4, nation: "Canada" },
-  { id: 5, nation: "Japan" },
-];
-
-app.get("/welcome", (req: Request, res: Response, next: NextFunction) => {
-  res.send(participants);
-});
-
-app.get("/welcome/:id", (req: Request, res: Response, next: NextFunction) => {
-  res.send(participants.find((el: any) => (el.id = req.params.id)));
-});
-
-app.post("/welcome", (req, res, next) => {
-  const participant = {
-    id: participants.length + 1,
-    nation: req.body.nation,
-  };
-  participants.push(participant);
-  res.send(participants);
-});
-
-app.put("/welcome/:id", (req, res, next) => {
-  const participant = participants.find(
-    (p: any) => p.id === parseInt(req.params.id)
-  );
-  if (!participant) {
-    return res.status(404).send("ID was not found.");
-  }
-  participant.nation = req.body.nation;
-  res.status(200).json(participant);
-  console.log("participants : " + participants);
-});
-
-app.delete("/welcome/:id", (req, res, next) => {
-  const participant = participants.find(
-    (p: any) => p.id === parseInt(req.params.id)
-  );
-  if (!participant) {
-    return res.status(404).send("ID was not found.");
-  }
-  const index = participants.indexOf(participant);
-  participants.splice(index, 1);
-  console.log(participants);
-  res.json("deleted!");
-}); */
