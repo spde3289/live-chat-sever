@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import roomList from "../data/roomList.json";
 import { Server } from "socket.io";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -17,7 +18,8 @@ const sever = app.listen("3000", () => {
 
 let io = new Server(sever);
 
-let userList: string[] = [];
+let userList: any[] | any;
+let room: any;
 
 io.on("connection", (socket) => {
   console.log("접속");
@@ -25,26 +27,28 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("user disconnected");
 
-    for (let i = 0; i < userList.length; i++) {
+    for (let i = 0; i < userList?.length; i++) {
       if (userList[i] === socket.id) {
         userList.splice(i, 1);
         i--;
       }
     }
-    io.emit("user list", userList);
+    io.to(room).emit("user list", userList);
   });
 
-  socket.on("new member", (user) => {
-    console.log("user : " + user);
-    if (user != null) {
-    }
+  socket.on("join room", (roomId) => {
+    room = roomId;
+
+    userList = roomList.find((el) => el.name === roomId)?.userList;
+
+    socket.join(roomId);
     userList.push(socket.id);
-    io.emit("user list", userList);
+    io.to(room).emit("user list", userList);
   });
 
   socket.on("chat message", (msg, id) => {
     console.log(id + ": " + msg);
-    io.emit("chat message", { msg: msg, user: id });
+    io.to(room).emit("chat message", { msg: msg, user: id });
   });
 });
 
