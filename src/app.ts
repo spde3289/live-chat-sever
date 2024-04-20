@@ -1,11 +1,13 @@
 import express, { Request, Response, NextFunction } from "express";
-import roomList from "../data/roomList.json";
+import fs from "fs";
 import { Server } from "socket.io";
 import bodyParser from "body-parser";
 import cors from "cors";
 
-import indexRouter from "../router/index";
-import roomRouter from "../router/room";
+import chatLog from "./data/chatLog.json";
+import indexRouter from "./router/index";
+import roomRouter from "./router/room";
+import { UserListType, ChatLogType } from "./Type";
 
 const app = express();
 const sever = app.listen("3000", () => {
@@ -18,13 +20,11 @@ const sever = app.listen("3000", () => {
 
 let io = new Server(sever);
 
-let userList: any[] = [];
+let userList: UserListType = [];
 
 io.on("connection", (socket) => {
-  console.log("접속");
-
+  // 연결 끊김
   socket.on("disconnect", () => {
-    console.log("user disconnected");
     for (let i = 0; i < userList?.length; i++) {
       if (userList[i].id === socket.id) {
         userList.splice(i, 1);
@@ -34,13 +34,20 @@ io.on("connection", (socket) => {
     io.emit("user list", userList);
   });
 
+  // 방 입장
   socket.on("join room", (user) => {
     userList.push({ user: user, id: socket.id });
     io.emit("user list", userList);
   });
 
+  // 채팅 입력
   socket.on("chat message", (msg, id) => {
-    console.log(id + ": " + msg);
+    const newChatLog: ChatLogType = chatLog;
+
+    newChatLog.push({ msg: msg, user: id });
+    const stringJson = JSON.stringify(newChatLog);
+
+    fs.writeFileSync("./src/data/chatLog.json", stringJson);
     io.emit("chat message", { msg: msg, user: id });
   });
 });
