@@ -8,6 +8,7 @@ import chatLog from "./data/chatLog.json";
 import indexRouter from "./router/index";
 import roomRouter from "./router/room";
 import { UserListType, ChatLogType } from "./Type";
+import { time } from "console";
 
 const app = express();
 const sever = app.listen("3000", () => {
@@ -43,8 +44,9 @@ io.on("connection", (socket) => {
   // 채팅 입력
   socket.on("chat message", (msg, id) => {
     const newChatLog: ChatLogType = chatLog;
+    const date = new Date().toString();
 
-    newChatLog.push({ msg: msg, user: id });
+    newChatLog.push({ msg: msg, user: id, time: date });
     const stringJson = JSON.stringify(newChatLog);
 
     fs.writeFileSync("./src/data/chatLog.json", stringJson);
