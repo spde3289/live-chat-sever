@@ -43,11 +43,11 @@ io.on("connection", (socket) => {
 
   // 채팅 입력
   socket.on("chat message", (msg, id) => {
-    const newChatLog: ChatLogType = chatLog;
+    const ChatLog: ChatLogType = chatLog;
     const date = new Date().toString();
 
-    newChatLog.push({ msg: msg, user: id, time: date });
-    const stringJson = JSON.stringify(newChatLog);
+    ChatLog.push({ msg: msg, user: id, time: date });
+    const stringJson = JSON.stringify(ChatLog);
 
     fs.writeFileSync("./src/data/chatLog.json", stringJson);
     io.emit("chat message", { msg: msg, user: id });
