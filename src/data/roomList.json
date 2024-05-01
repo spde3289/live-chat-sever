@@ -1,3 +1,4 @@
 [
-  { "id": 1, "name": "지훈방", "userList": [] }
+  { "id": 1, "name": "지훈방", "userList": [], "status": "ongoing" },
+  { "id": 2, "name": "테스트방", "userList": [], "status": "closed" }
 ]
