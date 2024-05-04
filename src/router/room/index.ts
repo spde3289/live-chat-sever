@@ -6,6 +6,7 @@ let router = express.Router();
 
 /** 방 리스트 */
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
+  console.log("dddd")
   res.json(roomList);
   // res.json({ user: "tj" });
 });

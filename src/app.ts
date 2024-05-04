@@ -98,16 +98,16 @@ io.on("connection", (socket) => {
     const user = userJoin(socket.id, username, room);
     socket.join(user.room);
 
-    socket.broadcast
-      .to(user.room)
-      .emit(
-        "chat message",
-        fromatMessage(
-          Announcement,
-          `${user.username}님이 입장하셨습니다.`,
-          user.room
-        )
-      );
+    // socket.broadcast
+    //   .to(user.room)
+    //   .emit(
+    //     "chat message",
+    //     fromatMessage(
+    //       Announcement,
+    //       `${user.username}님이 입장하셨습니다.`,
+    //       user.room
+    //     )
+    //   );
 
     io.to(user.room).emit("chat log", chatLog(user.room));
 
@@ -128,14 +128,14 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     const user = userLeave(socket.id);
     if (user) {
-      io.to(user.room).emit(
-        "chat message",
-        fromatMessage(
-          Announcement,
-          `${user.username}님이 퇴장하셨습니다.`,
-          user.room
-        )
-      );
+      // io.to(user.room).emit(
+      //   "chat message",
+      //   fromatMessage(
+      //     Announcement,
+      //     `${user.username}님이 퇴장하셨습니다.`,
+      //     user.room
+      //   )
+      // );
     }
   });
 });
