@@ -95,6 +95,7 @@ function chatLog(room: any) {
 io.on("connection", (socket) => {
   // 방 입장
   socket.on("join room", (username, room) => {
+    // console.log(username, room);
     const user = userJoin(socket.id, username, room);
     socket.join(user.room);
 
@@ -118,6 +119,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chat message", (msg) => {
+    // console.log(users);
     const user = getCurrentUser(socket.id);
     io.to(user.room).emit(
       "chat message",

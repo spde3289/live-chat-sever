@@ -9,16 +9,17 @@ router.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.json(roomList);
 });
 
-interface RoomData{
+interface RoomData {
   id: string;
   name: string;
-  userList: string[]
+  user: string;
   status: string;
 }
 
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
   const postData: RoomData = req.body;
-
+  // console.log(postData);
+  const date = new Date().toString();
   const capyRoomList: RoomData[] = roomList;
   if (Array.isArray(capyRoomList) && typeof postData === "object") {
     capyRoomList.push(postData);
@@ -26,7 +27,9 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
 
   const stringJson = JSON.stringify(capyRoomList);
 
-  const Json = JSON.stringify([]);
+  const Json = JSON.stringify([
+    { text: postData.name, name: postData.user, time: date },
+  ]);
 
   fs.writeFileSync(`./src/data/${postData.id}-chatLog.json`, Json);
 
