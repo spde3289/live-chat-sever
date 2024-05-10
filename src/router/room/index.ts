@@ -25,7 +25,7 @@ interface RoomDataType {
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
   const postData: ReqBodyType = req.body;
   const date = new Date().toString();
-  console.log(postData);
+  // console.log(postData);
   const capyRoomList: RoomDataType[] = roomList;
   if (Array.isArray(capyRoomList) && typeof postData === "object") {
     capyRoomList.push({

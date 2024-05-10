@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import fs from "fs";
 import { Server } from "socket.io";
 import bodyParser from "body-parser";
@@ -19,28 +19,38 @@ const sever = app.listen("3000", () => {
 
 let io = new Server(sever);
 
-const Announcement = "공지";
 const users: any = [];
 
-function userJoin(id: any, username: any, room: any) {
-  const user = { id, username, room };
+function userJoin(userId: any, username: any, roomName: any) {
+  const roomList = JSON.parse(
+    fs.readFileSync("./src/data/roomList.json", "utf8")
+  );
+  console.log(roomName);
+  const roomId = roomList.find((el: any) => {
+    return (
+      el.roomName.replace(/\s/g, "").trim() ===
+      roomName.replace(/\s/g, "").trim()
+    );
+  }).id;
+
+  const user = { userId, username, roomId };
   users.push(user);
   return user;
 }
 
-function getCurrentUser(id: any) {
-  return users.find((user: any) => user.id === id);
+function getCurrentUser(userId: any) {
+  return users.find((user: any) => user.userId === userId);
 }
 
-function userLeave(id: any) {
-  const index = users.findIndex((user: any) => user.id === id);
+function userLeave(userId: any) {
+  const index = users.findIndex((user: any) => user.userId === userId);
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }
 }
 
 function getRoomUsers(room: any) {
-  return users.filter((user: any) => user.room === room);
+  return users.filter((user: any) => user.roomId === room);
 }
 
 function fromatMessage(name: any, text: any, room: any) {
@@ -94,10 +104,10 @@ function chatLog(room: any) {
 
 io.on("connection", (socket) => {
   // 방 입장
-  socket.on("join room", (username, room) => {
-    // console.log(username, room);
-    const user = userJoin(socket.id, username, room);
-    socket.join(user.room);
+  socket.on("join room", (username, roomName) => {
+    // console.log(username, roomName);
+    const user = userJoin(socket.id, username, roomName);
+    socket.join(user.roomId);
 
     // socket.broadcast
     //   .to(user.room)
@@ -110,20 +120,20 @@ io.on("connection", (socket) => {
     //     )
     //   );
 
-    io.to(user.room).emit("chat log", chatLog(user.room));
+    io.to(user.roomId).emit("chat log", chatLog(user.roomId));
 
-    io.to(user.room).emit("roomUsers", {
-      room: user.room,
-      users: getRoomUsers(user.room),
+    io.to(user.roomId).emit("roomUsers", {
+      room: user.roomId,
+      users: getRoomUsers(user.roomId),
     });
   });
 
   socket.on("chat message", (msg) => {
-    // console.log(users);
     const user = getCurrentUser(socket.id);
-    io.to(user.room).emit(
+
+    io.to(user.roomId).emit(
       "chat message",
-      fromatMessage(user.username, msg, user.room)
+      fromatMessage(user.username, msg, user.roomId)
     );
   });
 
