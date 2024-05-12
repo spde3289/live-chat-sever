@@ -31,7 +31,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
     capyRoomList.push({
       id: postData.id,
       roomName: postData.name,
-      status: "ongoing",
+      status: "진행중",
     });
   }
 

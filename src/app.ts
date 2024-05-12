@@ -25,7 +25,7 @@ function userJoin(userId: any, username: any, roomName: any) {
   const roomList = JSON.parse(
     fs.readFileSync("./src/data/roomList.json", "utf8")
   );
-  console.log(roomName);
+  // console.log(roomName);
   const roomId = roomList.find((el: any) => {
     return (
       el.roomName.replace(/\s/g, "").trim() ===
