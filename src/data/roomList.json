@@ -1,1 +1,4 @@
-[{"id":"ds8l3klts46","roomName":"테스트 1번방","status":"진행중"},{"id":"47ejnrfp3n5","roomName":"테스트 2번 방 입니당","status":"진행중"},{"id":"ek0fd0ez65a","roomName":"dqwd\ndqw","status":"종료됨"},{"id":"b0sl9cmqi04","roomName":"아무런 방 생성~!","status":"진행중"}]
+[
+  { "id": "b22ciw4ipu", "roomName": "테스트 1번", "status": "진행중" },
+  { "id": "2wrg4a5y4xq", "roomName": "테스트 2번", "status": "진행중" }
+]

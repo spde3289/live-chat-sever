@@ -3,10 +3,11 @@ import fs from "fs";
 import { Server } from "socket.io";
 import bodyParser from "body-parser";
 import cors from "cors";
+import { WebClient } from "@slack/web-api";
+import "dotenv/config";
 
 import indexRouter from "./router/index";
 import roomRouter from "./router/room";
-import { UserListType, ChatLogType } from "./Type";
 
 const app = express();
 const sever = app.listen("3000", () => {
@@ -19,18 +20,18 @@ const sever = app.listen("3000", () => {
 
 let io = new Server(sever);
 
+const botClient = new WebClient(process.env.BOT_KEY!);
+const channelId = process.env.CHAT_CHANNEL_ID!;
+
 const users: any = [];
 
 function userJoin(userId: any, username: any, roomName: any) {
   const roomList = JSON.parse(
     fs.readFileSync("./src/data/roomList.json", "utf8")
   );
-  // console.log(roomName);
+
   const roomId = roomList.find((el: any) => {
-    return (
-      el.roomName.replace(/\s/g, "").trim() ===
-      roomName.replace(/\s/g, "").trim()
-    );
+    return el.id === roomName;
   }).id;
 
   const user = { userId, username, roomId };
@@ -130,6 +131,16 @@ io.on("connection", (socket) => {
 
   socket.on("chat message", (msg) => {
     const user = getCurrentUser(socket.id);
+
+    botClient.chat
+      .postMessage({
+        channel: channelId,
+        text: `New Chat ${user.roomId}!`,
+      })
+      .catch((error) => {
+        console.log("오류가 발생했습니다.");
+        console.error(error);
+      });
 
     io.to(user.roomId).emit(
       "chat message",
