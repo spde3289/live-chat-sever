@@ -9,21 +9,37 @@ let router = express.Router();
 const botClient = new WebClient(process.env.BOT_KEY!);
 const channelId = process.env.ROOM_CHANNEL_ID!;
 /** 방 리스트 */
+
+const roomListMap = (list: any[]) => {
+  return list.map((el: any) => {
+    return {
+      id: el.id,
+      selectMenu: el.selectMenu,
+      roomName: el.roomName,
+      status: el.status,
+    };
+  });
+};
+
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  res.json(roomList);
+  res.json(roomListMap(roomList));
 });
 
 interface ReqBodyType {
+  selectMenu: string;
   id: string;
   name: string;
   user: string;
   status: string;
+  password: string;
 }
 
 interface RoomDataType {
   id: string;
+  selectMenu: string;
   roomName: string;
   status: string;
+  password: string;
 }
 
 router.post("/", (req: Request, res: Response, next: NextFunction) => {
@@ -34,8 +50,10 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
   if (Array.isArray(capyRoomList) && typeof postData === "object") {
     capyRoomList.push({
       id: postData.id,
+      selectMenu: postData.selectMenu,
       roomName: postData.name,
       status: "진행중",
+      password: postData.password,
     });
   }
 
@@ -58,7 +76,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
     });
 
   fs.writeFileSync("./src/data/roomList.json", stringJson);
-  res.send(capyRoomList);
+  res.send(roomListMap(capyRoomList));
 });
 
 export default router;
