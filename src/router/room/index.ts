@@ -79,4 +79,14 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
   res.send(roomListMap(capyRoomList));
 });
 
+router.post("/join", (req: Request, res: Response, next: NextFunction) => {
+  const postData: any = req.body;
+
+  const findRoom = roomList.find((el) => {
+    return el.id === postData.content;
+  });
+
+  if (findRoom) res.send(findRoom.password === postData.password);
+});
+
 export default router;
