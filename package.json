@@ -6,7 +6,7 @@
   "author": "spde3289 <spde3289@naver.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/src/app.js",
+    "start": "pm2 start dist/src/app.js -p 3060",
     "build": "tsc -p .",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts"
   },
@@ -24,6 +24,7 @@
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "pm2": "^5.4.0",
     "socket.io": "^4.7.5"
   }
 }

@@ -10,15 +10,18 @@ import indexRouter from "./router/index";
 import roomRouter from "./router/room";
 
 const app = express();
-const sever = app.listen("3000", () => {
+
+const PORT = process.env.PORT || 8080;
+
+const server = app.listen(PORT, () => {
   console.log(`
   ################################################
-        🛡️  Server listening on port: 3000🛡️
+        🛡️  Server listening on port: ${PORT}🛡️
   ################################################
   `);
 });
 
-let io = new Server(sever);
+let io = new Server(server);
 
 const botClient = new WebClient(process.env.BOT_KEY!);
 const channelId = process.env.CHAT_CHANNEL_ID!;
@@ -163,15 +166,43 @@ io.on("connection", (socket) => {
   });
 });
 
+// 수정된 CORS 설정
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173/");
+  res.setHeader("Access-Control-Allow-Origin", "https://live-support.shop");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
+
 app.use(bodyParser.json());
-app.use(cors({ origin: "http://localhost:5173" }));
+/* app.use(
+  cors({
+    origin: "https://live-support.shop",
+  })
+); */
+
+const whitelist: string[] = [
+  "https://live-support.shop",
+  "https://www.live-support.shop",
+];
+
+const corsOptions: cors.CorsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    if (origin && whitelist.indexOf(origin) !== -1) { // 만일 whitelist 배열에 origin인자가 있을 경우
+      callback(null, true); // cors 허용
+    } else {
+      callback(new Error("Not Allowed Origin!")); // cors 비허용
+    }
+  },
+};
+
+app.use(cors(corsOptions)); // 옵션을 추가한 CORS 미들웨어 추가
+
 app.use("/", indexRouter);
 app.use("/room", roomRouter);

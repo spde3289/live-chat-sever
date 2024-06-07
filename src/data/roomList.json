@@ -5,12 +5,5 @@
     "roomName": "테스트 메이플방",
     "status": "진행중",
     "password": "1234"
-  },
-  {
-    "id": "b64lcga8c25",
-    "selectMenu": "MonsterHunter",
-    "roomName": "테스트 몬헌 방",
-    "status": "진행중",
-    "password": "1111"
   }
 ]
