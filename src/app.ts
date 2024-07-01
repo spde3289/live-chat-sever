@@ -108,8 +108,8 @@ function chatLog(room: any) {
 
 io.on("connection", (socket) => {
   // 방 입장
+
   socket.on("join room", (username, roomName) => {
-    // console.log(username, roomName);
     const user = userJoin(socket.id, username, roomName);
     socket.join(user.roomId);
 
@@ -180,21 +180,19 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
-/* app.use(
-  cors({
-    origin: "https://live-support.shop",
-  })
-); */
-
 const whitelist: string[] = [
+  "http://localhost:5173",
   "https://live-support.shop",
   "https://www.live-support.shop",
 ];
 
 const corsOptions: cors.CorsOptions = {
-  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    if (origin && whitelist.indexOf(origin) !== -1) { // 만일 whitelist 배열에 origin인자가 있을 경우
+  origin: function (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void
+  ) {
+    if (origin && whitelist.indexOf(origin) !== -1) {
+      // 만일 whitelist 배열에 origin인자가 있을 경우
       callback(null, true); // cors 허용
     } else {
       callback(new Error("Not Allowed Origin!")); // cors 비허용
@@ -202,6 +200,7 @@ const corsOptions: cors.CorsOptions = {
   },
 };
 
+app.use(bodyParser.json());
 app.use(cors(corsOptions)); // 옵션을 추가한 CORS 미들웨어 추가
 
 app.use("/", indexRouter);

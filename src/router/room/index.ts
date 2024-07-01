@@ -22,7 +22,10 @@ const roomListMap = (list: any[]) => {
 };
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  res.json(roomListMap(roomList));
+  const data = fs.readFileSync("./src/data/roomList.json", "utf8");
+  const jsonData = JSON.parse(data);
+
+  res.json(roomListMap(jsonData));
 });
 
 interface ReqBodyType {
@@ -79,8 +82,6 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
   res.send(roomListMap(capyRoomList));
 });
 
-
-
 router.post("/join", (req: Request, res: Response, next: NextFunction) => {
   const postData: any = req.body;
 
@@ -91,6 +92,21 @@ router.post("/join", (req: Request, res: Response, next: NextFunction) => {
 
     if (findRoom) res.send(findRoom!.password === postData.password);
   }
+});
+
+router.delete("/", (req: Request, res: Response, next: NextFunction) => {
+  const postData: any = req.body;
+
+  const data = fs.readFileSync("./src/data/roomList.json", "utf8");
+  const JsonData = JSON.parse(data);
+
+  const deleteData = JsonData.filter((el: any) => el.id != postData.data.id);
+
+  const stringJson = JSON.stringify(deleteData);
+
+  fs.writeFileSync("./src/data/roomList.json", stringJson);
+
+  res.json(roomListMap(deleteData));
 });
 
 export default router;
