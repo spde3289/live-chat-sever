@@ -109,4 +109,25 @@ router.delete("/", (req: Request, res: Response, next: NextFunction) => {
   res.json(roomListMap(deleteData));
 });
 
+router.put("/", (req: Request, res: Response, next: NextFunction) => {
+  const postData: any = req.body;
+
+  const data = fs.readFileSync("./src/data/roomList.json", "utf8");
+  let rooms = JSON.parse(data);
+
+  let room = rooms.find((r: any) => r.id === postData.id);
+
+  if (room) {
+    Object.assign(room, postData);
+    fs.writeFileSync(
+      "./src/data/roomList.json",
+      JSON.stringify(rooms, null, 2),
+      "utf8"
+    );
+    res.json(roomListMap(rooms));
+  } else {
+    res.status(404).send({ message: "Room not found" });
+  }
+});
+
 export default router;
