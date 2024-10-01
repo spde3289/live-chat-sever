@@ -6,7 +6,7 @@
   "author": "spde3289 <spde3289@naver.com>",
   "license": "MIT",
   "scripts": {
-    "start": "dist/api/app.js",
+    "start": "pm2 start dist/api/app.js",
     "build": "tsc -p .",
     "dev": "nodemon --watch \"api/**/*.ts\" --exec \"ts-node\" api/app.ts"
   },
