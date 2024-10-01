@@ -30,7 +30,7 @@ const users: any = [];
 
 function userJoin(userId: any, username: any, roomName: any) {
   const roomList = JSON.parse(
-    fs.readFileSync("./src/data/roomList.json", "utf8")
+    fs.readFileSync("./api/data/roomList.json", "utf8")
   );
 
   const roomId = roomList.find((el: any) => {
@@ -60,7 +60,7 @@ function getRoomUsers(room: any) {
 function fromatMessage(name: any, text: any, room: any) {
   const date = new Date().toString();
 
-  const filePath = `./src/data/${room}-chatLog.json`;
+  const filePath = `./api/data/${room}-chatLog.json`;
   fs.readFile(filePath, "utf8", (err: any, data: any) => {
     if (err) {
       console.error("파일을 읽는 도중 오류가 발생했습니다:", err);
@@ -100,7 +100,7 @@ function fromatMessage(name: any, text: any, room: any) {
 }
 
 function chatLog(room: any) {
-  const filePath = `./src/data/${room}-chatLog.json`;
+  const filePath = `./api/data/${room}-chatLog.json`;
   const jsonData = fs.readFileSync(filePath, "utf8");
 
   return jsonData;

@@ -22,7 +22,7 @@ const roomListMap = (list: any[]) => {
 };
 
 router.get("/", (req: Request, res: Response, next: NextFunction) => {
-  const data = fs.readFileSync("./src/data/roomList.json", "utf8");
+  const data = fs.readFileSync("./api/data/roomList.json", "utf8");
   const jsonData = JSON.parse(data);
 
   res.json(roomListMap(jsonData));
@@ -66,7 +66,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
     { text: postData.name, name: postData.user, time: date },
   ]);
 
-  fs.writeFileSync(`./src/data/${postData.id}-chatLog.json`, Json);
+  fs.writeFileSync(`./api/data/${postData.id}-chatLog.json`, Json);
 
   botClient.chat
     .postMessage({
@@ -78,7 +78,7 @@ router.post("/", (req: Request, res: Response, next: NextFunction) => {
       console.error(error);
     });
 
-  fs.writeFileSync("./src/data/roomList.json", stringJson);
+  fs.writeFileSync("./api/data/roomList.json", stringJson);
   res.send(roomListMap(capyRoomList));
 });
 
@@ -97,14 +97,14 @@ router.post("/join", (req: Request, res: Response, next: NextFunction) => {
 router.delete("/", (req: Request, res: Response, next: NextFunction) => {
   const postData: any = req.body;
 
-  const data = fs.readFileSync("./src/data/roomList.json", "utf8");
+  const data = fs.readFileSync("./api/data/roomList.json", "utf8");
   const JsonData = JSON.parse(data);
 
   const deleteData = JsonData.filter((el: any) => el.id != postData.data.id);
 
   const stringJson = JSON.stringify(deleteData);
 
-  fs.writeFileSync("./src/data/roomList.json", stringJson);
+  fs.writeFileSync("./api/data/roomList.json", stringJson);
 
   res.json(roomListMap(deleteData));
 });
@@ -112,7 +112,7 @@ router.delete("/", (req: Request, res: Response, next: NextFunction) => {
 router.put("/", (req: Request, res: Response, next: NextFunction) => {
   const postData: any = req.body;
 
-  const data = fs.readFileSync("./src/data/roomList.json", "utf8");
+  const data = fs.readFileSync("./api/data/roomList.json", "utf8");
   let rooms = JSON.parse(data);
 
   let room = rooms.find((r: any) => r.id === postData.id);
@@ -120,7 +120,7 @@ router.put("/", (req: Request, res: Response, next: NextFunction) => {
   if (room) {
     Object.assign(room, postData);
     fs.writeFileSync(
-      "./src/data/roomList.json",
+      "./api/data/roomList.json",
       JSON.stringify(rooms, null, 2),
       "utf8"
     );
