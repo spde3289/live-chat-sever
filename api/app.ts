@@ -168,14 +168,14 @@ io.on("connection", (socket) => {
 
 // 수정된 CORS 설정
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); // 요청에 맞는 도메인만 허용
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
   );
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Origin"
   );
   next();
 });
@@ -191,17 +191,22 @@ const whitelist: string[] = [
 const corsOptions: cors.CorsOptions = {
   origin: function (origin, callback) {
     if (!origin || whitelist.indexOf(origin) !== -1) {
-      // origin이 없는 경우도 허용하거나, whitelist에 있는 경우 허용
-      callback(null, true);
+      callback(null, true); // 요청 허용
     } else {
-      callback(new Error("Not Allowed Origin!"));
+      callback(new Error("Not Allowed Origin!")); // 요청 차단
     }
   },
   methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Access-Control-Allow-Origin",
+  ], // 필요한 헤더들 추가
 };
-app.use(bodyParser.json());
-app.use(cors(corsOptions)); // 옵션을 추가한 CORS 미들웨어 추가
 
+app.use(cors(corsOptions)); // CORS 미들웨어 추가
+app.use(bodyParser.json());
 app.use("/", indexRouter);
 app.use("/room", roomRouter);
