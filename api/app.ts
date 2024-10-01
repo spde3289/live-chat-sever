@@ -11,7 +11,7 @@ import roomRouter from "./router/room";
 
 const app = express();
 
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 
 const server = app.listen(PORT, () => {
   console.log(`
@@ -168,7 +168,7 @@ io.on("connection", (socket) => {
 
 // 수정된 CORS 설정
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://live-support.shop");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
@@ -182,24 +182,24 @@ app.use((req, res, next) => {
 
 const whitelist: string[] = [
   "http://localhost:5173",
+  "http://localhost:3000",
+  "http://localhost:8080",
   "https://live-support.shop",
   "https://www.live-support.shop",
 ];
 
 const corsOptions: cors.CorsOptions = {
-  origin: function (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) {
-    if (origin && whitelist.indexOf(origin) !== -1) {
-      // 만일 whitelist 배열에 origin인자가 있을 경우
-      callback(null, true); // cors 허용
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      // origin이 없는 경우도 허용하거나, whitelist에 있는 경우 허용
+      callback(null, true);
     } else {
-      callback(new Error("Not Allowed Origin!")); // cors 비허용
+      callback(new Error("Not Allowed Origin!"));
     }
   },
+  methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
 };
-
 app.use(bodyParser.json());
 app.use(cors(corsOptions)); // 옵션을 추가한 CORS 미들웨어 추가
 
