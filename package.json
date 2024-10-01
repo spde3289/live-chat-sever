@@ -6,9 +6,9 @@
   "author": "spde3289 <spde3289@naver.com>",
   "license": "MIT",
   "scripts": {
-    "start": "pm2 start dist/api/index.js - 3080",
+    "start": "pm2 start dist/api/app.js - 3080",
     "build": "tsc -p .",
-    "dev": "nodemon --watch \"api/**/*.ts\" --exec \"ts-node\" index.ts"
+    "dev": "nodemon --watch \"api/**/*.ts\" --exec \"ts-node\" app.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
